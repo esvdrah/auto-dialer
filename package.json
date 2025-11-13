@@ -1,0 +1,16 @@
+{
+  "name": "auto-dialer",
+  "module": "./src/index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "scripts": {
+    "dev" : "bun run --watch src/index.ts",
+    "test": "bun test"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
