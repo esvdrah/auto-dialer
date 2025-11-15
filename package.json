@@ -1,16 +1,24 @@
 {
   "name": "auto-dialer",
-  "module": "./src/index.ts",
+  "version": "1.0.0",
+  "description": "An automated dialer system using Puppeteer and cron jobs.",
+  "author": "Erick Saavedra",
+  "module": "./src/index.js",
   "type": "module",
-  "private": true,
+  "license": "MIT",
   "devDependencies": {
     "@types/bun": "latest"
   },
   "scripts": {
-    "dev" : "bun run --watch src/index.ts",
+    "dev": "bun run --watch src/index.js",
+    "start": "bun run src/index.js",
     "test": "bun test"
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "dependencies": {
+    "node-cron": "^4.2.1",
+    "puppeteer": "^24.29.1"
   }
 }
