@@ -1,7 +1,7 @@
 import puppeteer from "puppeteer";
 import { CONFIG } from "../config/index.js";
 import { logger } from "../helpers/index.js";
-import { SELECTORS } from "../constants/selectors.js";
+import { SELECTORS, ACTION_BUTTONS, CONFIRM_BUTTONS } from "../constants/selectors.js";
 
 export class DialerService {
   constructor() {
@@ -27,9 +27,11 @@ export class DialerService {
   }
 
   async clickActionButton(actionType) {
-    const buttonSelector = actionType === "entry"
-      ? SELECTORS.ENTRY_BUTTON
-      : SELECTORS.EXIT_BUTTON;
+    const buttonSelector = ACTION_BUTTONS[actionType];
+
+    if (!buttonSelector) {
+      throw new Error(`Invalid action type: ${actionType}`);
+    }
     await this.page.click(buttonSelector);
     logger("🔘", `Button ${actionType} clicked`);
   }
@@ -68,6 +70,34 @@ export class DialerService {
     return await this.page.evaluate((selectors) => {
       return document.querySelector(selectors.DNI_DISPLAY).textContent.trim();
     }, SELECTORS);
+  }
+
+  async clickSendButton() {
+    try {
+      await this.page.click(SELECTORS.SEND_BUTTON);
+
+      await this.page.waitForNavigation({
+        waitUntil: 'networkidle2',
+        timeout: 5000
+      }).catch(() => { });
+
+      logger("📤", "Send button clicked");
+    } catch (error) {
+      logger("❌", `Failed to click send button: ${error.message}`);
+    }
+  }
+
+  async clickConfirmationButton(actionType) {
+    const confirmationSelector = CONFIRM_BUTTONS[actionType];
+
+    try {
+      await this.page.waitForSelector(confirmationSelector, { timeout: 5000 });
+      await this.page.click(confirmationSelector);
+
+      logger("✅", `Confirmation button for ${actionType} clicked`);
+    } catch (error) {
+      logger("❌", `Failed to click confirmation button for ${actionType}: ${error.message}`);
+    }
   }
 
   async takeScreenshot(actionType) {

@@ -26,8 +26,8 @@ const markDniNumbers = async (dniNumbers, actionType) => {
       logger("✅", "Validation succeeded");
     }
 
-    // TODO: Mark agreement button
-
+    await dialerService.clickSendButton();
+    await dialerService.clickConfirmationButton(actionType);
     await dialerService.takeScreenshot(actionType);
   } catch (error) {
     logger("❌", `Error: ${error.message}`);
@@ -43,7 +43,7 @@ const registerCronJobs = () => {
   entrySchedules.forEach((schedule, index) => {
     cron.schedule(schedule.trim(), () => {
       logger("⏰", `Job ENTRY #${index + 1} executed`);
-      markDniNumbers(CONFIG.dniNumbers, "entry").catch(err =>
+      markDniNumbers(CONFIG.dniNumbers, "ENTRY").catch(err =>
         logger("❌", `Job ENTRY fail: ${err.message}`)
       );
     });
@@ -52,7 +52,7 @@ const registerCronJobs = () => {
   exitSchedules.forEach((schedule, index) => {
     cron.schedule(schedule.trim(), () => {
       logger("⏰", `Job EXIT #${index + 1} executed`);
-      markDniNumbers(CONFIG.dniNumbers, "exit").catch(err =>
+      markDniNumbers(CONFIG.dniNumbers, "EXIT").catch(err =>
         logger("❌", `Job EXIT fail: ${err.message}`)
       );
     });
@@ -65,4 +65,4 @@ const registerCronJobs = () => {
 registerCronJobs();
 
 // Manual test
-// markDniNumbers(CONFIG.dniNumbers, "entry");
+// markDniNumbers(CONFIG.dniNumbers, "ENTRY");
