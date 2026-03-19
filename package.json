@@ -1,7 +1,7 @@
 {
   "name": "auto-dialer",
-  "version": "1.0.0",
-  "description": "An automated dialer system using Puppeteer and cron jobs.",
+  "version": "1.1.0",
+  "description": "Automated dialer system using cron jobs",
   "author": "Erick Saavedra",
   "module": "./src/index.js",
   "type": "module",
