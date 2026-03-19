@@ -1,136 +1,137 @@
 # Auto-Dialer 📞
 
-Sistema automatizado para registrar marca de entrada y salida (asistencia) en Buk Register usando tareas cron programadas.
+An automated system to register clock in and clock out times (attendance) in Buk Register using scheduled cron tasks.
 
-## Características
+## Features
 
-- ✅ Marcaje automático de entrada y salida según horarios configurables
-- 🔄 Ejecución secuencial de endpoints (no paralelo)
-- 📊 Sistema de logging con niveles (info, success, warning, error)
-- ⏰ Soporte para múltiples horarios por día usando expresiones cron
-- 🔐 Configuración centralizada con variables de entorno
+- ✅ Automatic clock in/out marking according to configurable schedules
+- 🔄 Sequential endpoint execution (not parallel)
+- 📊 Logging system with levels (info, success, warning, error)
+- ⏰ Support for multiple schedules per day using cron expressions
+- 🔐 Centralized configuration with environment variables
 
-## Instalación
+## Installation
 
-Requiere Bun como runtime. Para instalar las dependencias:
+Requires Bun as runtime. To install dependencies:
 
 ```bash
 bun install
 ```
 
-## Configuración
+## Configuration
 
-Crear archivo `.env` en la raíz del proyecto con las siguientes variables:
+Create a `.env` file in the project root with the following variables:
 
 ```env
-# DNI/RUT del usuario (sin puntos ni guión)
+# User's ID/DNI without dots or hyphens
 DNI_NUMBER=99999999
 
-# URL base de la API (opcional si usas el valor por defecto)
+# API base URL (optional, defaults to the value shown)
 BASE_DIAL_URL=https://app.ctrlit.cl/ctrl/dial/
 
-# Horarios de marcaje (formato cron, separados por comas)
-# SCHEDULE_ENTRY: Entrada - ejemplo 08:00 y 14:00
+# Clock in schedules (cron format, comma-separated)
+# SCHEDULE_ENTRY: Example 08:00 and 14:00
 SCHEDULE_ENTRY=0 8 * * 1-5,0 14 * * 1-5
 
-# SCHEDULE_EXIT: Salida - ejemplo 13:00 y 18:00
+# Clock out schedules (cron format, comma-separated)
+# SCHEDULE_EXIT: Example 13:00 and 18:00
 SCHEDULE_EXIT=0 13 * * 1-5,0 18 * * 1-5
 ```
 
-### Formato de Expresiones Cron
+### Cron Expression Format
 
 ```
-┌───────────── minuto (0 - 59)
-│ ┌───────────── hora (0 - 23)
-│ │ ┌───────────── día del mes (1 - 31)
-│ │ │ ┌───────────── mes (1 - 12)
-│ │ │ │ ┌───────────── día de la semana (0 - 7) (0 y 7 son domingo)
+┌───────────── minute (0 - 59)
+│ ┌───────────── hour (0 - 23)
+│ │ ┌───────────── day of month (1 - 31)
+│ │ │ ┌───────────── month (1 - 12)
+│ │ │ │ ┌───────────── day of week (0 - 7) (0 and 7 are Sunday)
 │ │ │ │ │
 │ │ │ │ │
 * * * * *
 ```
 
-**Ejemplos:**
-- `0 8 * * 1-5` → Todos los días a las 08:00 (lunes a viernes)
-- `0 13 * * *` → Todos los días a las 13:00 (incluidos fines de semana)
-- `0 14 * * 0` → Todos los domingos a las 14:00
+**Examples:**
+- `0 8 * * 1-5` → Every day at 08:00 (Monday to Friday)
+- `0 13 * * *` → Every day at 13:00 (including weekends)
+- `0 14 * * 0` → Every Sunday at 14:00
 
-## Uso
+## Usage
 
-### Modo desarrollo (con reinicio automático)
+### Development mode (with auto-restart)
 
 ```bash
 bun run dev
 ```
 
-### Modo producción
+### Production mode
 
 ```bash
 bun run start
 ```
 
-### Pruebas manuales
+### Manual Testing
 
-Descomenta las líneas al final del archivo `src/index.js`:
+Uncomment the lines at the end of `src/index.js` file:
 
 ```javascript
 // executeDialSequence(Object.values(CONFIG.dialUrlsEntry));
 // executeDialSequence(Object.values(CONFIG.dialUrlsExit));
 ```
 
-## Estructura del Proyecto
+## Project Structure
 
 ```
 src/
-├── index.js          # Lógica principal de cron jobs
+├── index.js          # Main cron jobs logic
 ├── config/
-│   └── index.js      # Configuración centralizada
+│   └── index.js      # Centralized configuration
 └── helpers/
-    ├── index.js      # Exportador de helpers
-    └── logger.js     # Sistema de logging
+    ├── index.js      # Helpers exporter
+    └── logger.js     # Logging system
 ```
 
-## Endpoints de Marcaje
+## Dial Endpoints
 
-El sistema ejecuta dos endpoints de forma **secuencial** para cada marcaje:
+The system executes two endpoints **sequentially** for each clock mark:
 
-1. **REGISTRATION**: Registra la marca en el sistema
-2. **WORK_INFO**: Consulta información adicional de la jornada
+1. **REGISTRATION**: Registers the clock mark in the system
+2. **WORK_INFO**: Queries additional workday information
 
-Cada endpoint recibe parámetros como:
-- `sentido`: 1 (entrada) o 0 (salida)
-- `rut`: RUT del usuario
-- `latitud` / `longitud`: coordenadas (opcional)
+Each endpoint receives parameters such as:
+- `sentido`: 1 (clock in) or 0 (clock out)
+- `rut`: User ID/DNI
+- `latitud` / `longitud`: coordinates (optional)
 
 ## Logging
 
-El sistema proporciona logs con timestamp y niveles:
+The system provides logs with timestamp and levels:
 
 ```
-[2024-03-18T10:30:00.123Z] ✅ Marcaje completado exitosamente
-[2024-03-18T10:30:05.456Z] ❌ Error en petición a https://...
+[2024-03-18T10:30:00.123Z] ✅ Clock mark completed successfully
+[2024-03-18T10:30:05.456Z] ❌ Error in request to https://...
 ```
 
-**Niveles de log:**
-- 🔵 `info` - Información general
-- ✅ `success` - Operación exitosa
-- ⚠️ `warning` - Advertencia
+**Log Levels:**
+- 🔵 `info` - General information
+- ✅ `success` - Successful operation
+- ⚠️ `warning` - Warning
 - ❌ `error` - Error
 
-## Solución de Problemas
+## Troubleshooting
 
-### Las llamadas se hacen en paralelo
-El proyecto está configurado para ser **secuencial**. Cada endpoint se ejecuta después de que termina el anterior.
+### Calls are being made in parallel
+The project is configured to be **sequential**. Each endpoint executes after the previous one completes.
 
-### Variables de entorno no se cargan
-- Verifica que el archivo `.env` exista en la raíz del proyecto
-- Asegúrate de que Bun esté leyendo correctamente con `Bun.env`
+### Environment variables are not loading
+- Verify that the `.env` file exists in the project root
+- Make sure Bun is reading correctly with `Bun.env`
 
-### La API retorna errores
-- Verifica que el `DNI_NUMBER` sea válido
-- Comprueba que `BASE_DIAL_URL` sea accesible
-- Revisa los logs para detalles del error
+### API returns errors
+- Verify that `DNI_NUMBER` is valid
+- Check that `BASE_DIAL_URL` is accessible
+- Review logs for error details
 
-## Licencia
+## License
 
-Este proyecto está bajo licencia MIT – ver archivo [LICENSE](LICENSE) para detalles.
+This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.
