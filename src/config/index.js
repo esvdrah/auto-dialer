@@ -10,13 +10,13 @@ const API_KEY = 'KqpFkRElr7'; // Considerar mover a .env si es sensible
 export const CONFIG = {
   // URLs de marcaje para entrada
   dialUrlsEntry: {
-    REGISTRATION: `${BASE_URL}registrarweb/${API_KEY}/sentido=1&latitud=&longitud=&rut=${USER_DNI}`,
+    REGISTRATION: `${BASE_URL}registrarweb/${API_KEY}?sentido=1&latitud=&longitud=&rut=${USER_DNI}`,
     WORK_INFO: `${BASE_URL}infotrab/${API_KEY}?sentido=1&rut=${USER_DNI}`
   },
 
   // URLs de marcaje para salida
   dialUrlsExit: {
-    REGISTRATION: `${BASE_URL}registrarweb/${API_KEY}/sentido=0&latitud=&longitud=&rut=${USER_DNI}`,
+    REGISTRATION: `${BASE_URL}registrarweb/${API_KEY}?sentido=0&latitud=&longitud=&rut=${USER_DNI}`,
     WORK_INFO: `${BASE_URL}infotrab/${API_KEY}?sentido=0&rut=${USER_DNI}`
   },
 
